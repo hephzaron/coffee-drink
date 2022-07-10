@@ -12,12 +12,12 @@ setup_db(app)
 CORS(app)
 
 '''
-@TODO uncomment the following line to initialize the datbase
+@TODO uncomment the following line to initialize the database
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
-!! Running this funciton will add one
+!! Running this function will add one
 '''
-# db_drop_and_create_all()
+db_drop_and_create_all()
 
 # ROUTES
 '''
@@ -28,7 +28,23 @@ CORS(app)
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+@app.after_request
+def after_request(response):
+    '''
+    Returns a response object
+        Parameters:
+            response (Object): A response object
+        Returns:
+            response (Object): A response object
+    '''
+    response.headers.add(
+        'Access-Control-Allow-Headers', 'Content-Type,Authorization,true'
+    )
 
+    response.headers.add(
+        'Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE'
+    )
+    return response
 
 '''
 @TODO implement endpoint

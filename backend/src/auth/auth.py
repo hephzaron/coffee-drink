@@ -3,9 +3,11 @@ from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
+from decouple import config
 
+AUTH0_DOMAIN = config('AUTH0_DOMAIN')
 
-AUTH0_DOMAIN = 'udacity-fsnd.auth0.com'
+## AUTH0_DOMAIN = 'udacity-fsnd.auth0.com'
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'dev'
 
