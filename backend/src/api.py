@@ -17,17 +17,8 @@ CORS(app)
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 !! Running this function will add one
 '''
-db_drop_and_create_all()
+#db_drop_and_create_all()
 
-# ROUTES
-'''
-@TODO implement endpoint
-    GET /drinks
-        it should be a public endpoint
-        it should contain only the drink.short() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
-        or appropriate status code indicating reason for failure
-'''
 @app.after_request
 def after_request(response):
     '''
@@ -40,11 +31,42 @@ def after_request(response):
     response.headers.add(
         'Access-Control-Allow-Headers', 'Content-Type,Authorization,true'
     )
-
     response.headers.add(
         'Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE'
     )
     return response
+
+
+# ROUTES
+'''
+@TODO implement endpoint
+    GET /drinks
+        it should be a public endpoint
+        it should contain only the drink.short() data representation
+    returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
+        or appropriate status code indicating reason for failure
+'''
+@app.route('/drinks')
+def get_drinks():
+    '''
+    An endpoint that fetches all the drinks from the database
+        Parameters:
+            None
+        Returns:
+            <success> bool: successful transaction
+            <drinks> array: an array of drinks
+    '''
+
+    # Fetch an array of drinks
+    drinks = [ drink.short() for drink in Drink.query.all()]
+
+    if not drinks:
+        abort(404)
+
+    return jsonify({
+        'success': True,
+        'drinks': drinks
+        })
 
 '''
 @TODO implement endpoint
@@ -54,6 +76,27 @@ def after_request(response):
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks-detail')
+def get_drinks_detail():
+    '''
+    An endpoint that fetches all the drinks detail from the database
+        Parameters:
+            None
+        Returns:
+            <success> bool: successful transaction
+            <drinks> array: an array of drinks
+    '''
+
+    # Fetch an array of drinks
+    drinks = [ drink.long() for drink in Drink.query.all()]
+
+    if not drinks:
+        abort(404)
+
+    return jsonify({
+        'success': True,
+        'drinks': drinks
+        })
 
 
 '''
@@ -100,11 +143,13 @@ Example error handling for unprocessable entity
 
 @app.errorhandler(422)
 def unprocessable(error):
-    return jsonify({
-        "success": False,
-        "error": 422,
-        "message": "unprocessable"
-    }), 422
+    return(
+        jsonify({
+            'success': False,
+            'error': 422,
+            'message': 'unprocessable'
+            }), 422
+        )
 
 
 '''
@@ -122,7 +167,35 @@ def unprocessable(error):
 @TODO implement error handler for 404
     error handler should conform to general task above
 '''
+@app.errorhandler(400)
+def bad_request(error):
+    return (
+        jsonify({
+            'success': False,
+            'error': 400,
+            'message': 'Bad request'}),
+        400
+    )
 
+@app.errorhandler(404)
+def not_found(error):
+    return (
+        jsonify({
+            'success': False,
+            'error': 404,
+            'message': 'Resource not found'}),
+        404
+    )
+
+@app.errorhandler(500)
+def server_error(error):
+    return (
+        jsonify({
+            'success': False,
+            'error': 500,
+            'message': 'Server error'}),
+        500
+    )
 
 '''
 @TODO implement error handler for AuthError
