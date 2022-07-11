@@ -125,7 +125,6 @@ def create_drink():
         abort(400)
 
     try:
-        del body['id']
         title = body['title']
         recipe = json.dumps(body['recipe'])
         drink = Drink(title=title, recipe=recipe)
@@ -135,8 +134,6 @@ def create_drink():
             'success': True,
             'drinks': drink.long()
             })
-    except KeyError:
-        pass
 
     except SQLAlchemyError as e:
         abort(400)
@@ -153,6 +150,41 @@ def create_drink():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks/<int:drink_id>', methods=['PATCH'])
+def update_drink(drink_id):
+    '''
+    An endpoint that updates a question rating
+        Parameters:
+            drink_id (int): id of drink to be updated
+        Returns:
+            [success] bool: successful transaction
+            [drinks] array<Drink>: an array of the created drink
+    '''
+    body = request.get_json()
+
+    try:
+        drink = Drink.query.filter(Drink.id==drink_id).one_or_none()
+
+        if drink is None:
+            abort(404)
+
+        if 'title' in body:
+            drink.title = body['title']
+
+        if 'recipe' in body:
+            drink.recipe = json.dumps(body['recipe'])
+
+        drink.update()
+
+        result = Drink.query.filter(Drink.id==drink_id).one_or_none()
+
+        return jsonify({
+            'success': True,
+            'drinks': result.long()
+            })
+
+    except SQLAlchemyError :
+        abort(400)
 
 
 '''
