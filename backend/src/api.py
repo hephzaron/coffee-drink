@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, abort
 from sqlalchemy import exc
 import json
 from flask_cors import CORS
+from sqlalchemy.exc import SQLAlchemyError
 
 from .database.models import db_drop_and_create_all, setup_db, Drink
 from .auth.auth import AuthError, requires_auth
@@ -53,8 +54,8 @@ def get_drinks():
         Parameters:
             None
         Returns:
-            <success> bool: successful transaction
-            <drinks> array: an array of drinks
+            [success] bool: successful transaction
+            [drinks] array<Drink>: an array of drinks object
     '''
 
     # Fetch an array of drinks
@@ -83,8 +84,8 @@ def get_drinks_detail():
         Parameters:
             None
         Returns:
-            <success> bool: successful transaction
-            <drinks> array: an array of drinks
+            [success] bool: successful transaction
+            [drinks] array<Drink>: an array of drink objects
     '''
 
     # Fetch an array of drinks
@@ -108,6 +109,37 @@ def get_drinks_detail():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks', methods=['POST'])
+def create_drink():
+    '''
+    An endpoint that creates a drink
+        Parameters:
+            None
+        Returns:
+            [success] bool: successful transaction
+            [drinks] array<Drink>: an array of the created drink
+    '''
+    body = request.get_json()
+
+    if not all(body.values()):
+        abort(400)
+
+    try:
+        del body['id']
+        title = body['title']
+        recipe = json.dumps(body['recipe'])
+        drink = Drink(title=title, recipe=recipe)
+        drink.insert()
+
+        return jsonify({
+            'success': True,
+            'drinks': drink.long()
+            })
+    except KeyError:
+        pass
+
+    except SQLAlchemyError as e:
+        abort(400)
 
 
 '''
