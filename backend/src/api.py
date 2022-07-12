@@ -1,3 +1,4 @@
+from msilib.schema import Error
 import os
 from flask import Flask, request, jsonify, abort
 from sqlalchemy import exc
@@ -313,3 +314,14 @@ def server_error(error):
 @TODO implement error handler for AuthError
     error handler should conform to general task above
 '''
+@app.errorhandler(AuthError)
+def auth_error(error):
+    error_msg, status_code = error.error, error.status_code
+    return(
+        jsonify({
+            'success': False,
+            'error': status_code,
+            'message': error_msg['message']
+        }),
+        status_code
+    )
