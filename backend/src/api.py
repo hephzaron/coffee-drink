@@ -78,7 +78,8 @@ def get_drinks():
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks-detail')
-def get_drinks_detail():
+@requires_auth('get:drinks-detail')
+def get_drinks_detail(payload):
     '''
     An endpoint that fetches all the drinks detail from the database
         Parameters:
@@ -110,7 +111,8 @@ def get_drinks_detail():
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks', methods=['POST'])
-def create_drink():
+@requires_auth('post:drinks')
+def create_drink(payload):
     '''
     An endpoint that creates a drink
         Parameters:
@@ -151,7 +153,8 @@ def create_drink():
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks/<int:drink_id>', methods=['PATCH'])
-def update_drink(drink_id):
+@requires_auth('patch:drinks')
+def update_drink(payload, drink_id):
     '''
     An endpoint that updates a question rating
         Parameters:
@@ -168,10 +171,10 @@ def update_drink(drink_id):
         if drink is None:
             abort(404)
 
-        if 'title' in body:
+        if 'title' in body.keys():
             drink.title = body['title']
 
-        if 'recipe' in body:
+        if 'recipe' in body.keys():
             drink.recipe = json.dumps(body['recipe'])
 
         drink.update()
@@ -197,6 +200,31 @@ def update_drink(drink_id):
     returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks/<int:drink_id>', methods=['DELETE'])
+@requires_auth('delete:drinks')
+def delete_drink(payload, drink_id):
+    '''
+    An endpoint that deletes a drink
+        Parameters:
+            drink_id (int): id of drink to be deleted
+        Returns:
+            [success] bool: successful transaction
+            [id] int: id of deleted drink
+    '''
+    # Get question with id: question_id
+    drink = Drink.query.filter(Drink.id==drink_id).one_or_none()
+
+    if drink is None:
+        abort(404)
+
+    try:
+        drink.delete()
+        return jsonify({
+            'success': True,
+            'id': drink_id
+        })
+    except SQLAlchemyError :
+        abort(500)
 
 
 # Error Handling
@@ -239,6 +267,26 @@ def bad_request(error):
             'error': 400,
             'message': 'Bad request'}),
         400
+    )
+
+@app.errorhandler(401)
+def bad_request(error):
+    return (
+        jsonify({
+            'success': False,
+            'error': 401,
+            'message': 'Unauthorized access'}),
+        401
+    )
+
+@app.errorhandler(403)
+def bad_request(error):
+    return (
+        jsonify({
+            'success': False,
+            'error': 403,
+            'message': 'Forbidden'}),
+        403
     )
 
 @app.errorhandler(404)
