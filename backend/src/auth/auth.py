@@ -1,4 +1,5 @@
 import json
+import re
 from flask import request, _request_ctx_stack
 from functools import wraps
 from jose import JWTError, jwt
@@ -50,9 +51,17 @@ def get_token_auth_header():
 
     authorization = headers['Authorization']
 
-    token = authorization.split()[1]
+    auth_re = '^Bearer\s{1}\w+\.[\w]+\.[\w\-\_]+$'
 
-    return token
+    if re.fullmatch(auth_re, authorization):
+        token = authorization.split()[1]
+        return token
+
+    else:
+        raise AuthError({
+            'code': 'malformed_header',
+            'message': 'authorization header is invalid'
+            }, 400)
 
 '''
 @TODO implement check_permissions(permission, payload) method
@@ -114,9 +123,9 @@ def verify_decode_jwt(token):
     json_jwks = json.loads(json_url.read())
 
     try:
-        unverified_header = jwt.get_unverified_header(token)
+        token_header = jwt.get_unverified_header(token)
 
-        if 'kid' not in unverified_header:
+        if 'kid' not in token_header:
             raise AuthError({
                 'code': 'unauthorized',
                 'message': 'authorization header is invalid'
@@ -131,7 +140,7 @@ def verify_decode_jwt(token):
     rsa_key = {}
 
     for dict in json_jwks['keys']:
-        if unverified_header['kid'] == dict['kid']:
+        if token_header['kid'] == dict['kid']:
             rsa_key = {**dict}
 
     if len(rsa_key) != 0:
@@ -186,6 +195,7 @@ def requires_auth(permission=''):
         @wraps(f)
         def wrapper(*args, **kwargs):
             token = get_token_auth_header()
+
             try:
                 payload = verify_decode_jwt(token)
             except:
@@ -193,6 +203,7 @@ def requires_auth(permission=''):
                     'code': 'unauthorized_access',
                     'message': 'no authorization to view this resource'
                     }, 401)
+
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
         return wrapper
