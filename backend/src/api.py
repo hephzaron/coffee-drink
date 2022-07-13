@@ -19,7 +19,7 @@ CORS(app)
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 !! Running this function will add one
 '''
-#db_drop_and_create_all()
+db_drop_and_create_all()
 
 @app.after_request
 def after_request(response):
@@ -135,7 +135,7 @@ def create_drink(payload):
 
         return jsonify({
             'success': True,
-            'drinks': drink.long()
+            'drinks': [drink.long()]
             })
 
     except SQLAlchemyError as e:
@@ -184,7 +184,7 @@ def update_drink(payload, drink_id):
 
         return jsonify({
             'success': True,
-            'drinks': result.long()
+            'drinks': [result.long()]
             })
 
     except SQLAlchemyError :
@@ -315,8 +315,8 @@ def server_error(error):
     error handler should conform to general task above
 '''
 @app.errorhandler(AuthError)
-def auth_error(error):
-    error_msg, status_code = error.error, error.status_code
+def auth_error(_error):
+    error_msg, status_code = _error.error, _error.status_code
     return(
         jsonify({
             'success': False,
