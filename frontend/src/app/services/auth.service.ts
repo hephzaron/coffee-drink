@@ -31,6 +31,9 @@ export class AuthService {
     return link;
   }
 
+  /**
+   * block should be commented out for persistent login
+  */
   build_logout_link(callbackPath = '') {
     let link = 'https://';
     link += this.url + '.auth0.com';
