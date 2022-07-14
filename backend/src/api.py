@@ -48,6 +48,16 @@ def after_request(response):
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
+@app.route('/')
+def index():
+    '''
+        Test api endpoint on heroku
+    '''
+    return jsonify({
+        'success': True,
+        'message': 'Welcome to hephzy coffee app'
+    }, 200)
+
 @app.route('/drinks')
 def get_drinks():
     '''
