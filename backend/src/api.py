@@ -1,14 +1,16 @@
 from flask import Flask, request, jsonify, abort
 from sqlalchemy import exc
+from flask_migrate import Migrate
 import json
 from flask_cors import CORS
 from sqlalchemy.exc import SQLAlchemyError
 
-from .database.models import db_drop_and_create_all, setup_db, Drink
+from .database.models import db_drop_and_create_all, setup_db, Drink, db
 from .auth.auth import AuthError, requires_auth
 
 app = Flask(__name__)
 setup_db(app)
+migrate = Migrate(app, db)
 CORS(app)
 
 '''
@@ -17,7 +19,7 @@ CORS(app)
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 !! Running this function will add one
 '''
-db_drop_and_create_all()
+#db_drop_and_create_all()
 
 @app.after_request
 def after_request(response):

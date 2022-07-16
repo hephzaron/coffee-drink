@@ -5,11 +5,17 @@ from decouple import config
 import json
 
 ENVIRONMENT = config('ENVIRONMENT')
+PRODUCTION_DB_PATH = config('DATABASE_URL')
 
-if ENVIRONMENT == 'development':
-    database_filename = "database.db"
-    project_dir = os.path.dirname(os.path.abspath(__file__))
-    database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))
+database_filename = "database.db"
+project_dir = os.path.dirname(os.path.abspath(__file__))
+database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))
+
+if ENVIRONMENT == 'production':
+    if PRODUCTION_DB_PATH and PRODUCTION_DB_PATH.startswith('postgres://'):
+        PRODUCTION_DB_PATH = PRODUCTION_DB_PATH.replace('postgres://','postgresql://', 1)
+
+    database_path = PRODUCTION_DB_PATH
 
 db = SQLAlchemy()
 
@@ -57,7 +63,7 @@ class Drink(db.Model):
     # Autoincrementing, unique primary key
     id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
     # String Title
-    title = Column(String(80), unique=True)
+    title = Column(String(80), unique=True, nullable=False)
     # the ingredients blob - this stores a lazy json blob
     # the required datatype is [{'color': string, 'name':string, 'parts':number}]
     recipe = Column(String(180), nullable=False)
