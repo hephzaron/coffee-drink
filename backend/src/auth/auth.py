@@ -1,3 +1,6 @@
+'''
+This file contains the implementation of user authentication
+'''
 import json
 import re
 from flask import request, _request_ctx_stack
@@ -18,6 +21,19 @@ AuthError Exception
 A standardized way to communicate auth failure modes
 '''
 class AuthError(Exception):
+    '''
+    A class to to raise an exception due to auth failure
+    ...
+    Parameters
+    ----------
+    error[code] (str): name of error thrown
+    error[message] (str): description of error
+    status_code (int): http status code of error
+
+    Attributes
+    ----------
+    __init__: class constructor
+    '''
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
@@ -57,11 +73,10 @@ def get_token_auth_header():
         token = authorization.split()[1]
         return token
 
-    else:
-        raise AuthError({
-            'code': 'malformed_header',
-            'message': 'authorization header is invalid'
-            }, 400)
+    raise AuthError({
+        'code': 'malformed_header',
+        'message': 'authorization header is invalid'
+        }, 400)
 
 '''
 @TODO implement check_permissions(permission, payload) method
@@ -139,9 +154,9 @@ def verify_decode_jwt(token):
 
     rsa_key = {}
 
-    for dict in json_jwks['keys']:
-        if token_header['kid'] == dict['kid']:
-            rsa_key = {**dict}
+    for obj in json_jwks['keys']:
+        if token_header['kid'] == obj['kid']:
+            rsa_key = {**obj}
 
     if len(rsa_key) != 0:
 
