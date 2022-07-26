@@ -8,7 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from .database.models import db_drop_and_create_all, setup_db, Drink, db
 from .auth.auth import AuthError, requires_auth
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../build', static_url_path='/')
 setup_db(app)
 migrate = Migrate(app, db)
 CORS(app)
@@ -49,14 +49,13 @@ def after_request(response):
         or appropriate status code indicating reason for failure
 '''
 @app.route('/')
+@app.route('/tabs/drink-menu')
+@app.route('/tabs/user-page')
 def index():
     '''
         Test api endpoint on heroku
-    '''
-    return jsonify({
-        'success': True,
-        'message': 'Welcome to hephzy coffee app'
-    }, 200)
+    '''    
+    return app.send_static_file('index.html')
 
 @app.route('/drinks')
 def get_drinks():
