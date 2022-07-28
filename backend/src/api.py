@@ -54,7 +54,18 @@ def after_request(response):
 def index():
     '''
         Test api endpoint on heroku
-    '''    
+    '''
+    # add one demo row which is helping in POSTMAN test
+    """ drink = Drink(
+        title='water2',
+        recipe='[{"name": "water", "color": "blue", "parts": 1}]'
+    )
+
+    drink.insert() """
+    
+    """ return jsonify({
+        'message': 'Mock data successfully created'
+    }) """
     return app.send_static_file('index.html')
 
 @app.route('/drinks')

@@ -101,7 +101,11 @@ export class DrinksService {
       this.http.get(this.url + '/drinks', this.getHeaders())
       .subscribe((res: any) => {
         this.drinksToItems(res.drinks);
-        console.log(res);
+        console.log('response',res);
+        console.log('environment',environment)
+      },(err: any) => {
+        console.log('error',err);
+        console.log('environment',environment)
       });
     }
 

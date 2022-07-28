@@ -7,7 +7,7 @@
     "ng": "ng",
     "clean": "rimraf ../backend/build && mkdirp ../backend/build",
     "start": "ng serve",
-    "build": "npm run clean && ng build --service-worker --watch",
+    "build": "npm run clean && ng build --configuration=production --service-worker --watch",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

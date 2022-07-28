@@ -6,12 +6,12 @@ import json
 
 ENVIRONMENT = config('ENVIRONMENT')
 PRODUCTION_DB_PATH = config('DATABASE_URL')
-DEVELOPMENT_DB_URL = config('DEVELOPMENT_DB_URL')
+#DEVELOPMENT_DB_URL = config('DEVELOPMENT_DB_URL')
 
-#database_filename = "database.db"
-#project_dir = os.path.dirname(os.path.abspath(__file__))
-#database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))
-database_path = DEVELOPMENT_DB_URL
+database_filename = "database.db"
+project_dir = os.path.dirname(os.path.abspath(__file__))
+database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))
+#database_path = DEVELOPMENT_DB_URL
 if ENVIRONMENT == 'production':
     if PRODUCTION_DB_PATH and PRODUCTION_DB_PATH.startswith('postgres://'):
         PRODUCTION_DB_PATH = PRODUCTION_DB_PATH.replace('postgres://','postgresql://', 1)
