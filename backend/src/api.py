@@ -112,7 +112,7 @@ def get_drinks_detail(payload):
 
     # Fetch an array of drinks
     drinks = [ drink.long() for drink in Drink.query.all()]
-
+    
     if not drinks:
         abort(404)
 

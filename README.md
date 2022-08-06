@@ -22,6 +22,17 @@ There are `@TODO` comments throughout the project. We recommend tackling the sec
 
 We started the full stack application for you. It is designed with some key functional areas:
 
+## TODO
+
+App was configured properly and setup on heroku. View [here](https://hephzy-coffee.herokuapp.com/)
+
+### Note
+
+Based on project scope, only the manager(me) or any other user assigned the role of a manager in Auth0 can create, edit and delete a drink. <br/>
+To try out that feature, after registration, send me a mail at: `tobi_daramola@yahoo.com` so I can grant you the permission.
+
+Auth0 domain is subject to frequent changes because app is running on free mode and cannot guarantee retaining user credentials for too long.
+
 ### Backend
 
 The `./backend` directory contains a partially completed Flask server with a pre-written SQLAlchemy module to simplify your data needs. You will need to complete the required endpoints, configure, and integrate Auth0 for authentication.

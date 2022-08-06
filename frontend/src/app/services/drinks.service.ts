@@ -102,10 +102,8 @@ export class DrinksService {
       .subscribe((res: any) => {
         this.drinksToItems(res.drinks);
         console.log('response',res);
-        console.log('environment',environment)
       },(err: any) => {
         console.log('error',err);
-        console.log('environment',environment)
       });
     }
 
