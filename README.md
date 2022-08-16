@@ -1,10 +1,9 @@
 # Coffee Shop Full Stack
+![Auth0 Login Page](image/Login%20Page.PNG)
 
-![Auth0 Login Page](https://drive.google.com/file/d/1-GI2dGBRhsZihiZ3KLaf8V72aIscEGnD/view?usp=sharing)
+![Common User Interface](image/Coffee%20Dashboard.PNG)
 
-![Common User Interface](https://drive.google.com/file/d/1UMzLeAVCfxJv5MKhaI8OXB9X7438JZ88/view?usp=sharing)
-
-![Admin User Interface]https://drive.google.com/file/d/1_zwTdnd0pXKysRU0nRg0gdqc-V9k3YEo/view?usp=sharing
+![Admin User Interface](image/Auth%20User%20edit.PNG)
 
 ## Full Stack Nano - IAM Final Project
 
